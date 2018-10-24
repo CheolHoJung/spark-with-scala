@@ -83,7 +83,11 @@ object WikipediaRanking {
    *   Note: this operation is long-running. It can potentially run for
    *   several seconds.
    */
-  def rankLangsReduceByKey(langs: List[String], rdd: RDD[WikipediaArticle]): List[(String, Int)] = ???
+  def rankLangsReduceByKey(langs: List[String], rdd: RDD[WikipediaArticle]): List[(String, Int)] = {
+    rdd.flatMap(article => {
+      langs.filter(lang => article.mentionsLanguage(lang)).map((_, 1))
+    }).reduceByKey(_ + _).sortBy(-_._2).collect().toList
+  }
 
   def main(args: Array[String]) {
 
@@ -101,6 +105,7 @@ object WikipediaRanking {
 
     /* Output the speed of each ranking */
     println(timing)
+    Thread.sleep(10000)
     sc.stop()
   }
 
