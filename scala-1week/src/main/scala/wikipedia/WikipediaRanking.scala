@@ -48,6 +48,7 @@ object WikipediaRanking {
    *   several seconds.
    */
   def rankLangs(langs: List[String], rdd: RDD[WikipediaArticle]): List[(String, Int)] = {
+    rdd.cache()
     langs.map(lang => (lang, occurrencesOfLang(lang, rdd)))
       .sortWith((tuple1, tuple2) => tuple1._2 > tuple2._2)
 }
