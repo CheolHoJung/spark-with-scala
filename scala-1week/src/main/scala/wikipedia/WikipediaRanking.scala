@@ -105,7 +105,6 @@ object WikipediaRanking {
 
     /* Output the speed of each ranking */
     println(timing)
-    Thread.sleep(10000)
     sc.stop()
   }
 
