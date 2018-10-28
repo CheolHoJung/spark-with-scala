@@ -1,10 +1,9 @@
 package stackoverflow
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-import org.apache.spark.rdd.RDD
-
-import annotation.tailrec
+import scala.annotation.tailrec
 
 /** A raw stackoverflow posting, either a question or an answer */
 case class Posting(postingType: Int, id: Int, acceptedAnswer: Option[Int], parentId: Option[QID], score: Int, tags: Option[String]) extends Serializable
@@ -77,7 +76,23 @@ class StackOverflow extends Serializable {
 
   /** Group the questions and answers together */
   def groupedPostings(postings: RDD[Posting]): RDD[(QID, Iterable[(Question, Answer)])] = {
-    ???
+    // Obtain an RDD with the pairs of (Question, Iterable[Answer]).
+    // However, grouping on the question directly is expensive.
+    // So a better alternative is to match on the QID, thus producing an RDD[(QID, Iterable[(Question, Answer))]..
+
+    /* grouping on the question directly is expensive
+    val questions: RDD[Question] = postings.filter(_.postingType == 1)
+    val pairsOfQuestionAndAnswers = questions.map(question => {
+      val answers: Iterable[Answer] = postings.filter(post => post.postingType == 2 && post.parentId == question.id).collect()
+      (question, answers)
+    }))*/
+
+    // (QID, Question)
+    val questions: RDD[(QID, Question)] = postings.filter(_.postingType == 1).map(post => (post.id, post))
+    // (QID, Answer)
+    val answers: RDD[(QID, Answer)] = postings.filter(_.postingType == 2).map(post => (post.parentId.get, post))
+
+    questions.join(answers).groupByKey()
   }
 
 
