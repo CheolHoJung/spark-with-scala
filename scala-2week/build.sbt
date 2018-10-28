@@ -10,5 +10,6 @@ resolvers ++= Seq(
 
 val sparkVersion = "2.3.2"
 
+libraryDependencies += "junit" % "junit" % "4.10" % Test
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
 libraryDependencies += "org.apache.spark" % "spark-core_2.11" % sparkVersion
