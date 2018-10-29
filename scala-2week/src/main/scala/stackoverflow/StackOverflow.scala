@@ -87,7 +87,6 @@ class StackOverflow extends Serializable {
       (question, answers)
     }))*/
 
-
     val questions: RDD[(QID, Question)] = postings
       .filter(_.postingType == 1)
       .map(post => (post.id, post))
