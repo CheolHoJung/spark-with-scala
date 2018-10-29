@@ -99,19 +99,14 @@ class StackOverflow extends Serializable {
   /** Compute the maximum score for each posting */
   def scoredPostings(grouped: RDD[(QID, Iterable[(Question, Answer)])]): RDD[(Question, HighScore)] = {
 
-    def answerHighScore(as: Array[Answer]): HighScore = {
-      var highScore = 0
-          var i = 0
-          while (i < as.length) {
-            val score = as(i).score
-                if (score > highScore)
-                  highScore = score
-                  i += 1
-          }
-      highScore
+    def answerHighScore(as: Iterable[Answer]): HighScore = {
+      as.map(_.score).max
     }
 
-    ???
+    grouped.values
+      .flatMap(identity)
+      .groupByKey()
+      .mapValues(answerHighScore)
   }
 
 
