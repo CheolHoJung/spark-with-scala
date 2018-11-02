@@ -130,7 +130,8 @@ class StackOverflow extends Serializable {
       }
     }
 
-    ???
+    scored.filter((tuple: (Question, HighScore)) => firstLangInTag(tuple._1.tags, langs).isDefined)
+      .map((tuple: (Question, HighScore)) => (langSpread * firstLangInTag(tuple._1.tags, langs).get, tuple._2))
   }
 
 
